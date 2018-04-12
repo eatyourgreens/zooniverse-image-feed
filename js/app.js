@@ -77,7 +77,7 @@ panoptes.bind('classification', function(data) {
     if (update) {
       clearTimeout(update);
     }
-    var update = setTimeout(function() {
+    update = setTimeout(function() {
       subjects.forEach(function(data, i) {
         var red = parseInt(data.project_id) % 256;
         var green = parseInt(data.workflow_id) % 256;
@@ -91,7 +91,7 @@ panoptes.bind('classification', function(data) {
         imgs[i].src = subject;
         imgs[i].alt = panoptes_projects[data.project_id].display_name;
       });
-    }, 2000);
+    }, 500);
   }
   // console.log( "panoptes classification", data );
 });
