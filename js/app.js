@@ -76,6 +76,9 @@ panoptes.bind('classification', function(data) {
       var image_type = Object.keys(image)[0]
       var subject = image[image_type] || '';
       subjects.unshift(subject);
+      if (subjects.length > 20) {
+        subjects.pop();
+      }
       subjects.forEach(function(subject, i) {
         imgs[i].src = subject;
         imgs[i].alt = panoptes_projects[data.project_id].display_name;
