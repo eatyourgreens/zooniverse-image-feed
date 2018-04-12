@@ -62,20 +62,15 @@ var talk = pusher.subscribe('talk');
 
 var subjects = [];
 var imgs = Array.from(document.getElementsByTagName('img'));
+var spans = Array.from(document.querySelectorAll('span.pan'));
 var update;
 
 panoptes.bind('classification', function(data) {
   var user_id = ( !!data.user_id ) ? parseInt( data.user_id ) : 0;
   var project = parseInt(data.project_id) + parseInt(data.workflow_id) + user_id + parseInt(data.classification_id);
-  var red = parseInt(data.project_id) % 256;
-  var green = parseInt(data.workflow_id) % 256;
-  var blue = parseInt(user_id) % 256;
   if (panoptes_projects[data.project_id]) {
-    var image = data.subject_urls[0];
     var body = document.body;
-    var image_type = Object.keys(image)[0]
-    var subject = image[image_type] || '';
-    subjects.unshift(subject);
+    subjects.unshift(data);
     if (subjects.length > 20) {
       subjects.pop();
     }
@@ -83,7 +78,16 @@ panoptes.bind('classification', function(data) {
       clearTimeout(update);
     }
     var update = setTimeout(function() {
-      subjects.forEach(function(subject, i) {
+      subjects.forEach(function(data, i) {
+        var red = parseInt(data.project_id) % 256;
+        var green = parseInt(data.workflow_id) % 256;
+        var blue = parseInt(user_id) % 256;
+        var rgba = [red, green, blue, '0.2']
+        var cssColour = 'rgba(' + rgba.join(',') + ')';
+        var image = data.subject_urls[0];
+        var image_type = Object.keys(image)[0]
+        var subject = image[image_type] || '';
+        spans[i].style.backgroundColor = cssColour;
         imgs[i].src = subject;
         imgs[i].alt = panoptes_projects[data.project_id].display_name;
       });
