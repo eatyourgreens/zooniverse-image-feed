@@ -62,6 +62,7 @@ var talk = pusher.subscribe('talk');
 
 var subjects = [];
 var imgs = Array.from(document.getElementsByTagName('img'));
+var update;
 
 panoptes.bind('classification', function(data) {
   var user_id = ( !!data.user_id ) ? parseInt( data.user_id ) : 0;
@@ -70,15 +71,18 @@ panoptes.bind('classification', function(data) {
   var green = parseInt(data.workflow_id) % 256;
   var blue = parseInt(user_id) % 256;
   if (panoptes_projects[data.project_id]) {
-    setTimeout(function() {
-      var image = data.subject_urls[0];
-      var body = document.body;
-      var image_type = Object.keys(image)[0]
-      var subject = image[image_type] || '';
-      subjects.unshift(subject);
-      if (subjects.length > 20) {
-        subjects.pop();
-      }
+    var image = data.subject_urls[0];
+    var body = document.body;
+    var image_type = Object.keys(image)[0]
+    var subject = image[image_type] || '';
+    subjects.unshift(subject);
+    if (subjects.length > 20) {
+      subjects.pop();
+    }
+    if (update) {
+      clearTimeout(update);
+    }
+    var update = setTimeout(function() {
       subjects.forEach(function(subject, i) {
         imgs[i].src = subject;
         imgs[i].alt = panoptes_projects[data.project_id].display_name;
